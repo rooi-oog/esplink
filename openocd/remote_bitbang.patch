@@ -1,0 +1,43 @@
+--- remote_bitbang.c	2016-10-31 11:06:57.812267924 +0600
++++ remote_bitbang.c	2016-10-31 12:33:57.921692808 +0600
+@@ -120,11 +120,25 @@
+ 	remote_bitbang_putc(c);
+ }
+ 
++static int remote_bitbang_swdio_read (void)
++{
++	remote_swd_putc ('R');
++	return remote_bitbang_rread ();
++}
++
++static void remote_bitbang_swdio_drive (bool is_output)
++{
++	char c = is_output ? 'o' : 'i';
++	remote_bitbang_putc (c);
++}
++
+ static struct bitbang_interface remote_bitbang_bitbang = {
+ 	.read = &remote_bitbang_read,
+ 	.write = &remote_bitbang_write,
+ 	.reset = &remote_bitbang_reset,
+ 	.blink = &remote_bitbang_blink,
++	.swdio_read = &remote_bitbang_swdio_read,
++	.swdio_drive = &remote_bitbang_swdio_drive,	
+ };
+ 
+ static int remote_bitbang_init_tcp(void)
+@@ -271,10 +285,14 @@
+ 	COMMAND_REGISTRATION_DONE,
+ };
+ 
++static const char * const remote_bitbang_transport[] = { "jtag", "swd", NULL };
++
+ struct jtag_interface remote_bitbang_interface = {
+ 	.name = "remote_bitbang",
++	.transports = remote_bitbang_transport,
+ 	.execute_queue = &bitbang_execute_queue,
+ 	.commands = remote_bitbang_command_handlers,
++	.swd = &bitbang_swd,
+ 	.init = &remote_bitbang_init,
+ 	.quit = &remote_bitbang_quit,
+ };
