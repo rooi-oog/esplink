@@ -219,8 +219,8 @@ void serverTask (void *pvParameters)
 	ip_addr_t first_client_ip;
 	err_t err;
 	
-	xTaskHandle h_fromUartToNet = NULL;
-	xTaskHandle h_fromNetToUart = NULL;
+	TaskHandle_t h_fromUartToNet = NULL;
+	TaskHandle_t h_fromNetToUart = NULL;
 	
 	sdk_wifi_set_opmode (SOFTAP_MODE);    			
 	IP4_ADDR (&ap_ip.ip, 172, 16, 0, 1);
