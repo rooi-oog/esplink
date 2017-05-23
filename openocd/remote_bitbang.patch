@@ -6,7 +6,7 @@
  
 +static int remote_bitbang_swdio_read (void)
 +{
-+	remote_swd_putc ('R');
++	remote_bitbang_putc ('R');
 +	return remote_bitbang_rread ();
 +}
 +
